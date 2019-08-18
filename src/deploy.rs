@@ -38,10 +38,6 @@ pub fn run() {
     let accounts = web3.eth().accounts().wait().unwrap();
     let first_account = accounts[0];
 
-    //Get current balance
-    let balance = web3.eth().balance(first_account, None).wait().unwrap();
-    println!("Balance: {}", balance);
-
     let simple_storage_artifact = get_artifact("./contracts-output/SimpleStorage.abi", "./contracts-output/SimpleStorage.bin");
     let contract = deploy_contract(&simple_storage_artifact, &web3, first_account);
     println!("{}", contract.address());
