@@ -25,6 +25,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "baffle"
 version = "0.1.0"
 dependencies = [
+ "rustc-hex 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "web3 0.8.0 (git+https://github.com/tomusdrw/rust-web3)",
 ]
 

@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 web3 = { git = "https://github.com/tomusdrw/rust-web3" }
+rustc-hex = "2.0.1"
