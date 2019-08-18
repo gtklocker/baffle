@@ -36,14 +36,14 @@ pub fn run() {
     let (_eloop, transport) = web3::transports::Http::new("http://localhost:8545").unwrap();
     let web3 = web3::Web3::new(transport);
     let accounts = web3.eth().accounts().wait().unwrap();
+    let first_account = accounts[0];
 
     //Get current balance
-    let balance = web3.eth().balance(accounts[0], None).wait().unwrap();
-
+    let balance = web3.eth().balance(first_account, None).wait().unwrap();
     println!("Balance: {}", balance);
 
     let simple_storage_artifact = get_artifact("./contracts-output/SimpleStorage.abi", "./contracts-output/SimpleStorage.bin");
-    let contract = deploy_contract(&simple_storage_artifact, &web3, accounts[0]);
+    let contract = deploy_contract(&simple_storage_artifact, &web3, first_account);
     println!("{}", contract.address());
 
     //interact with the contract
@@ -52,7 +52,7 @@ pub fn run() {
     println!("{}", storage);
 
     //Change state of the contract
-    contract.call("set", (42,), accounts[0], Options::default());
+    contract.call("set", (42,), first_account, Options::default());
 
     //View changes made
     let result = contract.query("get", (), None, Options::default(), None);
