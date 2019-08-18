@@ -32,9 +32,13 @@ fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &Web3<
         .unwrap()
 }
 
+fn make_web3(rpc_url: &str) -> (web3::transports::EventLoopHandle, Web3<web3::transports::Http>) {
+    let (_eloop, transport) = web3::transports::Http::new(rpc_url).unwrap();
+    (_eloop, web3::Web3::new(transport))
+}
+
 pub fn run() {
-    let (_eloop, transport) = web3::transports::Http::new("http://localhost:8545").unwrap();
-    let web3 = web3::Web3::new(transport);
+    let (_eloop, web3) = make_web3("http://localhost:8545");
     let accounts = web3.eth().accounts().wait().unwrap();
     let first_account = accounts[0];
 
