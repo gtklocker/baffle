@@ -27,7 +27,7 @@ pub fn get_artifact(build_path: &Path, contract_name: &str) -> ContractArtifact 
     get_artifact_for_files(abi_path.to_str().unwrap(), bin_path.to_str().unwrap())
 }
 
-fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &Web3<T>, from_address: Address) -> Contract<T> {
+pub fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &Web3<T>, from_address: Address) -> Contract<T> {
     return Contract::deploy(web3.eth(), &artifact.abi)
         .unwrap()
         .confirmations(0)
@@ -44,8 +44,12 @@ fn make_web3(rpc_url: &str) -> (web3::transports::EventLoopHandle, Web3<web3::tr
     (_eloop, web3::Web3::new(transport))
 }
 
+pub fn make_web3_ganache() -> (web3::transports::EventLoopHandle, Web3<web3::transports::Http>) {
+    make_web3("http://localhost:8545")
+}
+
 pub fn run(build_path: &Path) {
-    let (_eloop, web3) = make_web3("http://localhost:8545");
+    let (_eloop, web3) = make_web3_ganache();
     let accounts = web3.eth().accounts().wait().unwrap();
     let first_account = accounts[0];
 
