@@ -1,10 +1,10 @@
 use std::process::{Command, Stdio};
 use std::path::Path;
 
-pub fn args(files: &[String]) -> Vec<String> {
+pub fn args(build_path: &Path, files: &[String]) -> Vec<String> {
     let args = [
         "-o",
-        "contracts-output/",
+        build_path.to_str().unwrap(),
         "--overwrite",
         "--bin",
         "--abi",

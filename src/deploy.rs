@@ -3,21 +3,28 @@ extern crate rustc_hex;
 extern crate web3;
 
 use std::{fs, time};
+use std::path::Path;
 use web3::contract::{Contract, Options};
 use web3::futures::Future;
 use web3::types::{Address, U256};
 use web3::Web3;
 
-struct ContractArtifact {
+pub struct ContractArtifact {
     abi: Vec<u8>,
     bin: String
 }
 
-fn get_artifact(abi_file: &str, bin_file: &str) -> ContractArtifact {
+fn get_artifact_for_files(abi_file: &str, bin_file: &str) -> ContractArtifact {
     ContractArtifact {
         abi: fs::read(abi_file).unwrap(),
         bin: fs::read_to_string(bin_file).unwrap()
     }
+}
+
+pub fn get_artifact(build_path: &Path, contract_name: &str) -> ContractArtifact {
+    let abi_path = build_path.join(format!("{}.abi", contract_name));
+    let bin_path = build_path.join(format!("{}.bin", contract_name));
+    get_artifact_for_files(abi_path.to_str().unwrap(), bin_path.to_str().unwrap())
 }
 
 fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &Web3<T>, from_address: Address) -> Contract<T> {
@@ -37,12 +44,12 @@ fn make_web3(rpc_url: &str) -> (web3::transports::EventLoopHandle, Web3<web3::tr
     (_eloop, web3::Web3::new(transport))
 }
 
-pub fn run() {
+pub fn run(build_path: &Path) {
     let (_eloop, web3) = make_web3("http://localhost:8545");
     let accounts = web3.eth().accounts().wait().unwrap();
     let first_account = accounts[0];
 
-    let simple_storage_artifact = get_artifact("./contracts-output/SimpleStorage.abi", "./contracts-output/SimpleStorage.bin");
+    let simple_storage_artifact = get_artifact(build_path, "SimpleStorage");
     let contract = deploy_contract(&simple_storage_artifact, &web3, first_account);
     println!("{}", contract.address());
 

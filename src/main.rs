@@ -3,18 +3,18 @@ use std::env;
 
 pub mod compiler;
 pub mod deploy;
+pub mod constants;
 
 fn compiler_main() {
-    let contracts_path = Path::new("./contracts/");
-    let contracts = compiler::get_contracts(contracts_path);
+    let contracts = compiler::get_contracts(Path::new(constants::CONTRACTS_PATH));
     println!("Compiling...");
     println!("{}", contracts.join("\n"));
-    let args = compiler::args(&contracts);
+    let args = compiler::args(Path::new(constants::BUILD_PATH), &contracts);
     compiler::run(&args);
 }
 
 fn deploy_main() {
-    deploy::run();
+    deploy::run(Path::new(constants::BUILD_PATH));
 }
 
 fn main() {
