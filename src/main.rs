@@ -32,13 +32,9 @@ fn get_files_with_extension(dir_path: &Path, _ext: String) -> Vec<String> {
     file_paths
         .filter(|p| {
             p.extension()
-            .and_then(|ext| {
-                ext.to_str()
-            })
-            .filter(|ext_str| {
-                ext_str.to_string() == _ext
-            })
-            .is_some()
+             .and_then(|ext| ext.to_str())
+             .filter(|ext_str| ext_str.to_string() == _ext)
+             .is_some()
         })
         .filter_map(|p| p.to_str().map(|s| s.to_string()))
         .collect()
