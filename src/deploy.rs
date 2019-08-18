@@ -8,14 +8,25 @@ use web3::futures::Future;
 use web3::types::{Address, U256};
 use web3::Web3;
 
-fn deploy_contract<T: web3::Transport>(bin_file: &str, abi_file: &str, web3: Web3<T>, from_address: Address) -> Contract<T> {
-    let bytecode = fs::read_to_string(bin_file).unwrap();
-    return Contract::deploy(web3.eth(), &fs::read(abi_file).unwrap())
+struct ContractArtifact {
+    abi: Vec<u8>,
+    bin: String
+}
+
+fn get_artifact(abi_file: &str, bin_file: &str) -> ContractArtifact {
+    ContractArtifact {
+        abi: fs::read(abi_file).unwrap(),
+        bin: fs::read_to_string(bin_file).unwrap()
+    }
+}
+
+fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &Web3<T>, from_address: Address) -> Contract<T> {
+    return Contract::deploy(web3.eth(), &artifact.abi)
         .unwrap()
         .confirmations(0)
         .poll_interval(time::Duration::from_secs(10))
         .options(Options::with(|opt| opt.gas = Some(3_000_000.into())))
-        .execute(bytecode, (), from_address)
+        .execute(&artifact.bin, (), from_address)
         .unwrap()
         .wait()
         .unwrap()
@@ -30,10 +41,9 @@ pub fn run() {
     let balance = web3.eth().balance(accounts[0], None).wait().unwrap();
 
     println!("Balance: {}", balance);
-    let bin_file = "./contracts-output/SimpleStorage.bin";
-    let abi_file = "./contracts-output/SimpleStorage.abi";
-    let contract = deploy_contract(bin_file, abi_file, web3, accounts[0]);
 
+    let simple_storage_artifact = get_artifact("./contracts-output/SimpleStorage.abi", "./contracts-output/SimpleStorage.bin");
+    let contract = deploy_contract(&simple_storage_artifact, &web3, accounts[0]);
     println!("{}", contract.address());
 
     //interact with the contract
