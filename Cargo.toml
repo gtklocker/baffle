@@ -3,6 +3,8 @@ name = "baffle"
 version = "0.1.0"
 authors = ["Kostis Karantias <kkarantias@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Test your Solidity code faster than you can say truffle oil."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
