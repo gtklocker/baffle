@@ -1,10 +1,10 @@
-use std::path::Path;
 use std::env;
 use std::fs;
+use std::path::Path;
 
 pub mod compiler;
-pub mod deploy;
 pub mod constants;
+pub mod deploy;
 
 fn compiler_main() {
     let contracts = compiler::get_contracts(Path::new(constants::CONTRACTS_PATH));

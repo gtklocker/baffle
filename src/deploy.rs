@@ -2,8 +2,8 @@
 extern crate rustc_hex;
 extern crate web3;
 
-use std::{fs, time};
 use std::path::Path;
+use std::{fs, time};
 use web3::contract::{Contract, Options};
 use web3::futures::Future;
 use web3::types::{Address, U256};
@@ -11,13 +11,13 @@ use web3::Web3;
 
 pub struct ContractArtifact {
     abi: Vec<u8>,
-    bin: String
+    bin: String,
 }
 
 fn get_artifact_for_files(abi_file: &str, bin_file: &str) -> ContractArtifact {
     ContractArtifact {
         abi: fs::read(abi_file).unwrap(),
-        bin: fs::read_to_string(bin_file).unwrap()
+        bin: fs::read_to_string(bin_file).unwrap(),
     }
 }
 
@@ -27,7 +27,11 @@ pub fn get_artifact(build_path: &Path, contract_name: &str) -> ContractArtifact 
     get_artifact_for_files(abi_path.to_str().unwrap(), bin_path.to_str().unwrap())
 }
 
-pub fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &Web3<T>, from_address: Address) -> Contract<T> {
+pub fn deploy_contract<T: web3::Transport>(
+    artifact: &ContractArtifact,
+    web3: &Web3<T>,
+    from_address: Address,
+) -> Contract<T> {
     return Contract::deploy(web3.eth(), &artifact.abi)
         .unwrap()
         .confirmations(0)
@@ -36,15 +40,23 @@ pub fn deploy_contract<T: web3::Transport>(artifact: &ContractArtifact, web3: &W
         .execute(&artifact.bin, (), from_address)
         .unwrap()
         .wait()
-        .unwrap()
+        .unwrap();
 }
 
-pub fn make_web3(rpc_url: &str) -> (web3::transports::EventLoopHandle, Web3<web3::transports::Http>) {
+pub fn make_web3(
+    rpc_url: &str,
+) -> (
+    web3::transports::EventLoopHandle,
+    Web3<web3::transports::Http>,
+) {
     let (_eloop, transport) = web3::transports::Http::new(rpc_url).unwrap();
     (_eloop, web3::Web3::new(transport))
 }
 
-pub fn make_web3_ganache() -> (web3::transports::EventLoopHandle, Web3<web3::transports::Http>) {
+pub fn make_web3_ganache() -> (
+    web3::transports::EventLoopHandle,
+    Web3<web3::transports::Http>,
+) {
     make_web3("http://localhost:8545")
 }
 

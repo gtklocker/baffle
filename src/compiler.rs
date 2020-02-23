@@ -1,5 +1,5 @@
-use std::process::{Command, Stdio};
 use std::path::Path;
+use std::process::{Command, Stdio};
 
 pub fn args(build_path: &Path, files: &[String]) -> Vec<String> {
     let args = [
@@ -25,16 +25,17 @@ pub fn run(args: &[String]) {
 }
 
 fn get_files_with_extension(dir_path: &Path, _ext: String) -> Vec<String> {
-    let file_paths = dir_path.read_dir()
+    let file_paths = dir_path
+        .read_dir()
         .unwrap()
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.path());
     file_paths
         .filter(|p| {
             p.extension()
-             .and_then(|ext| ext.to_str())
-             .filter(|ext_str| ext_str.to_string() == _ext)
-             .is_some()
+                .and_then(|ext| ext.to_str())
+                .filter(|ext_str| ext_str.to_string() == _ext)
+                .is_some()
         })
         .filter_map(|p| p.to_str().map(|s| s.to_string()))
         .collect()
