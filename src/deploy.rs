@@ -2,6 +2,8 @@
 extern crate rustc_hex;
 extern crate web3;
 
+use crate::constants;
+use std::env;
 use std::path::Path;
 use std::{fs, time};
 use web3::contract::{Contract, Options};
@@ -57,7 +59,10 @@ pub fn make_web3_ganache() -> (
     web3::transports::EventLoopHandle,
     Web3<web3::transports::Http>,
 ) {
-    make_web3("http://localhost:8545")
+    match env::var(constants::ENV_VAR_GANACHE_HOST) {
+        Ok(val) => make_web3(val.as_str()),
+        Err(_e) => make_web3("http://localhost:8545"),
+    }
 }
 
 pub fn run(build_path: &Path) {
