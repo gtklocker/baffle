@@ -1,4 +1,3 @@
-//based on examples/contract.rs
 extern crate rustc_hex;
 extern crate web3;
 
@@ -6,7 +5,7 @@ use std::{fs, time};
 use std::path::Path;
 use web3::contract::{Contract, Options};
 use web3::futures::Future;
-use web3::types::{Address, U256};
+use web3::types::Address;
 use web3::Web3;
 
 pub struct ContractArtifact {
@@ -46,27 +45,4 @@ pub fn make_web3(rpc_url: &str) -> (web3::transports::EventLoopHandle, Web3<web3
 
 pub fn make_web3_ganache() -> (web3::transports::EventLoopHandle, Web3<web3::transports::Http>) {
     make_web3("http://localhost:8545")
-}
-
-pub fn run(build_path: &Path) {
-    let (_eloop, web3) = make_web3_ganache();
-    let accounts = web3.eth().accounts().wait().unwrap();
-    let first_account = accounts[0];
-
-    let simple_storage_artifact = get_artifact(build_path, "SimpleStorage");
-    let contract = deploy_contract(&simple_storage_artifact, &web3, first_account);
-    println!("{}", contract.address());
-
-    //interact with the contract
-    let result = contract.query("get", (), None, Options::default(), None);
-    let storage: U256 = result.wait().unwrap();
-    println!("{}", storage);
-
-    //Change state of the contract
-    contract.call("set", (42,), first_account, Options::default());
-
-    //View changes made
-    let result = contract.query("get", (), None, Options::default(), None);
-    let storage: U256 = result.wait().unwrap();
-    println!("{}", storage);
 }
