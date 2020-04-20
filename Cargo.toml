@@ -10,4 +10,3 @@ description = "Test your Solidity code faster than you can say truffle oil."
 
 [dependencies]
 web3 = "0.10.0"
-rustc-hex = "2.0.1"

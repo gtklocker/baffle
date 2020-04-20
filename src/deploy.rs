@@ -1,4 +1,3 @@
-extern crate rustc_hex;
 extern crate web3;
 
 use std::{fs, time};
